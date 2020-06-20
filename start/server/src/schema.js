@@ -29,7 +29,16 @@ const typeDefs = gql`
     LARGE
   }
   type Query {
-    launches: [Launch]!
+    launches( # replace the current launches query with this one.
+      """
+      The number of results to show. Must be >= 1. Default = 20
+      """
+      pageSize: Int
+      """
+      If you add a cursor here, it will only return results _after_ this cursor
+      """
+      after: String
+    ): LaunchConnection!
     launch(id: ID!): Launch
     me: User
   }
@@ -39,10 +48,15 @@ const typeDefs = gql`
     login(email: String): String # login token
   }
   type TripUpdateResponse {
-  success: Boolean!
-  message: String
-  launches: [Launch]
-}
+    success: Boolean!
+    message: String
+    launches: [Launch]
+  }
+  type LaunchConnection { # add this below the Query type as an additional type.
+    cursor: String!
+    hasMore: Boolean!
+    launches: [Launch]!
+  }
 `;
 
 module.exports = typeDefs;
